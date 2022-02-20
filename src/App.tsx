@@ -14,43 +14,12 @@ import { getAnswers } from "./apis/answersApi";
 import "./App.css";
 import { COLORS } from "./constants";
 
-const answersExample = [
-  {
-    _id: "62114bafb4ffde946e7d47a1",
-    questions: [
-      {
-        question: "What's your email?",
-        answer: "email@email.com",
-      },
-      {
-        question: "What's your gender?",
-        answer: "Male",
-      },
-    ],
-    createdAt: "2022-02-18T22:00:00.000Z",
-  },
-  {
-    _id: "62114bafb4ffde946e7d47a1",
-    questions: [
-      {
-        question: "What's your email?",
-        answer: "email@email.com",
-      },
-      {
-        question: "What's your gender?",
-        answer: "Male",
-      },
-    ],
-    createdAt: "2022-02-18T22:00:00.000Z",
-  },
-];
-
 function App() {
-  const [answers, setAnswers] = useState(answersExample);
+  const [answers, setAnswers] = useState([]) as any;
 
   useEffect(() => {
     getAnswers()
-      .then(({ data }: any) => setAnswers(data))
+      .then(({ data }: any) => setAnswers(data?.data || []))
       .catch((error) => console.log(error));
   }, []);
 
@@ -73,32 +42,34 @@ function App() {
         <header>
           <h1 style={{ color: COLORS.tertiary }}>Answers List</h1>
         </header>
-        <table>
-          <tbody>
-            <tr>
-              <th style={{ color: COLORS.tertiary }}>#</th>
-              <th style={{ color: COLORS.tertiary }}>Date</th>
-              {answers[0]?.questions?.map((item) => (
-                <th style={{ color: COLORS.tertiary }}>{item.question}</th>
-              ))}
-            </tr>
-            {answers?.map((answer, index) => (
-              <>
-                <tr>
+        {!!answers.length && (
+          <table>
+            <tbody>
+              <tr>
+                <th style={{ color: COLORS.tertiary }}>#</th>
+                <th style={{ color: COLORS.tertiary }}>Date</th>
+                {answers[0]?.questions?.map((item: any, index: number) => (
+                  <th key={`${index}`} style={{ color: COLORS.tertiary }}>
+                    {item.question}
+                  </th>
+                ))}
+              </tr>
+              {answers?.map((answer: any, index: number) => (
+                <tr key={`${index}`}>
                   <td>{index + 1}</td>
                   <td>{moment(answer?.createdAt).format()}</td>
-                  {answer?.questions?.map((item) => (
-                    <td>
+                  {answer?.questions?.map((item: any, index: number) => (
+                    <td key={`${index}`}>
                       {item.answer?.length < 10
-                        ? item.answer
-                        : item.answer.substring(0, 7) + "..."}
+                        ? item?.answer
+                        : item?.answer?.substring(0, 7) + "..."}
                     </td>
                   ))}
                 </tr>
-              </>
-            ))}
-          </tbody>
-        </table>
+              ))}
+            </tbody>
+          </table>
+        )}
       </div>
     </div>
   );

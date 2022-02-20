@@ -1,3 +1,3 @@
 import { request } from ".";
 
-export const getAnswers = () => request.get(`/answer`);
+export const getAnswers = () => request.get(`/answers`);
